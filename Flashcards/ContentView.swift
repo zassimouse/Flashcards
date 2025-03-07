@@ -8,14 +8,23 @@
 import SwiftUI
 
 struct ContentView: View {
+    let columns = [
+        GridItem(.flexible()),
+        GridItem(.flexible())
+    ]
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            ScrollView {
+                LazyVGrid(columns: columns, spacing: 10) {
+                    ForEach(0..<10, id: \ .self) { _ in
+                        FlipCardView()
+                    }
+                }
+                .padding(.horizontal)
+            }
+            .navigationTitle("Flashcards")
         }
-        .padding()
     }
 }
 
