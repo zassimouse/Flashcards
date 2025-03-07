@@ -19,6 +19,19 @@ struct ContentView: View {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(0..<10, id: \ .self) { _ in
                         FlipCardView()
+                            .contextMenu {
+                                    Button {
+                                        
+                                    } label: {
+                                        Label("Edit", systemImage: "pencil")
+                                    }
+
+                                    Button(role: .destructive) {
+                                        
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
+                                }
                     }
                 }
                 .padding(.horizontal)
