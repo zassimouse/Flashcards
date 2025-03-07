@@ -24,6 +24,21 @@ struct ContentView: View {
                 .padding(.horizontal)
             }
             .navigationTitle("Flashcards")
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    NavigationLink(destination: ProfileView()) {
+                        Image(systemName: "gear")
+                            .font(.headline)
+                    }
+                }
+                
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    NavigationLink(destination: AddCardView()) {
+                        Image(systemName: "plus")
+                            .font(.headline)
+                    }
+                }
+            }
         }
     }
 }
