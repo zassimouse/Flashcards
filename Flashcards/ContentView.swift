@@ -20,18 +20,18 @@ struct ContentView: View {
                     ForEach(0..<10, id: \ .self) { _ in
                         FlipCardView()
                             .contextMenu {
-                                    Button {
-                                        
-                                    } label: {
-                                        Label("Edit", systemImage: "pencil")
-                                    }
-
-                                    Button(role: .destructive) {
-                                        
-                                    } label: {
-                                        Label("Delete", systemImage: "trash")
-                                    }
+                                Button {
+                                    
+                                } label: {
+                                    Label("Edit", systemImage: "pencil")
                                 }
+                                
+                                Button(role: .destructive) {
+                                    
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            }
                     }
                 }
                 .padding(.horizontal)
