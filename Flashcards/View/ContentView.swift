@@ -39,7 +39,7 @@ struct ContentView: View {
             .navigationTitle("Flashcards")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    NavigationLink(destination: ProfileView()) {
+                    NavigationLink(destination: AccountView()) {
                         Image(systemName: "gear")
                             .font(.headline)
                     }

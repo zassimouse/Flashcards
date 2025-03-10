@@ -45,7 +45,6 @@ struct FrontCardView: View {
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                // Check if the image exists at the path and load it
                 if let image = loadImage(from: flashcard.imagePath) {
                     Image(uiImage: image)
                         .resizable()
@@ -53,7 +52,6 @@ struct FrontCardView: View {
                         .frame(width: geometry.size.width, height: geometry.size.height)
                         .clipped()
                 } else {
-                    // Placeholder image when the image is not found
                     Image("photo.badge.plus")
                         .resizable()
                         .scaledToFit()
@@ -82,8 +80,6 @@ struct FrontCardView: View {
             return nil
         }
     }
-
-
 }
 
 struct BackCardView: View {

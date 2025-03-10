@@ -36,11 +36,10 @@ struct AddCardView: View {
                                     .clipped()
                                     .cornerRadius(10)
                             } else {
-                                Image("photo.badge.plus")
+                                Image(("photo.badge.plus"))
                                     .resizable()
                                     .scaledToFit()
                                     .frame(width: size * 0.25, height: size * 0.25)
-                                    .foregroundColor(Color(UIColor.secondaryLabel))
                             }
                         }
                         .frame(width: size, height: size)
@@ -81,7 +80,7 @@ struct AddCardView: View {
                 
                 Spacer()
             }
-            .navigationTitle("Add Card")
+            .navigationTitle("New Flashcard")
             .padding()
         }
     }

@@ -68,7 +68,7 @@ class RealmManager {
                 localRealm.delete(card)
             }
         } catch {
-            print("❌ Ошибка при удалении карточки:", error)
+            print("Error deleting card:", error)
         }
     }
 }
