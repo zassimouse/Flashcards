@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ContentView: View {
+    @StateObject private var viewModel = FlashcardViewModel()
+    
     let columns = [
         GridItem(.flexible()),
         GridItem(.flexible())
@@ -17,17 +19,15 @@ struct ContentView: View {
         NavigationStack {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 10) {
-                    ForEach(0..<10, id: \ .self) { _ in
-                        FlipCardView()
+                    ForEach(viewModel.flashcards, id: \.id) { flashcard in
+                        FlipCardView(flashcard)
                             .contextMenu {
                                 Button {
-                                    
                                 } label: {
                                     Label("Edit", systemImage: "pencil")
                                 }
                                 
                                 Button(role: .destructive) {
-                                    
                                 } label: {
                                     Label("Delete", systemImage: "trash")
                                 }
@@ -46,7 +46,7 @@ struct ContentView: View {
                 }
                 
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    NavigationLink(destination: AddCardView()) {
+                    NavigationLink(destination: AddCardView().environmentObject(viewModel)) {
                         Image(systemName: "plus")
                             .font(.headline)
                     }

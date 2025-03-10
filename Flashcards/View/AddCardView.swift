@@ -7,6 +7,8 @@ struct AddCardView: View {
     @State private var cardName: String = ""
     @State private var selectedImageData: Data? = nil
     @State private var selectedItem: PhotosPickerItem? = nil
+    @State private var imagePath: String? = nil
+    @EnvironmentObject var viewModel: FlashcardViewModel
     
     var body: some View {
         NavigationStack {
@@ -57,17 +59,25 @@ struct AddCardView: View {
                 
                 
                 Button {
-                    
+                    if let imageData = selectedImageData {
+                        if let fileName = viewModel.saveImageToFileSystem(imageData: imageData) {
+                            print("Saved image file name: \(fileName)")
+                            viewModel.addFlashcard(name: cardName, imagePath: fileName, userId: nil)
+                        }
+                    }
+                    dismiss()
                 } label: {
                     Text("Save Card")
                         .font(.headline)
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
+                        .background(.blue)
                         .background(cardName.isEmpty || selectedImageData == nil ? Color.gray : Color.blue)
                         .cornerRadius(15)
                         .disabled(cardName.isEmpty || selectedImageData == nil)
                 }
+                .disabled(cardName.isEmpty || selectedImageData == nil )
                 
                 Spacer()
             }

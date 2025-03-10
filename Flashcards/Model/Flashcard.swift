@@ -12,5 +12,5 @@ class Flashcard: Object, Identifiable {
     @Persisted(primaryKey: true) var id: ObjectId
     @Persisted var name: String
     @Persisted var imagePath: String
-    @Persisted var createdAt: Date = Date()
+    @Persisted var createdAt: Date
 }
