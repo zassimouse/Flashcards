@@ -59,10 +59,7 @@ struct AddCardView: View {
                 
                 Button {
                     if let imageData = selectedImageData {
-                        if let fileName = viewModel.saveImageToFileSystem(imageData: imageData) {
-                            print("Saved image file name: \(fileName)")
-                            viewModel.addFlashcard(name: cardName, imagePath: fileName, userId: nil)
-                        }
+                        viewModel.addFlashcard(name: cardName, imageData: imageData)
                     }
                     dismiss()
                 } label: {

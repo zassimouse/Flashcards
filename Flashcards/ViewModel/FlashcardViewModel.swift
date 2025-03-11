@@ -7,32 +7,74 @@
 
 import SwiftUI
 import RealmSwift
-import Combine
+import FirebaseAuth
 
 class FlashcardViewModel: ObservableObject {
     @Published var flashcards: [Flashcard] = []
     private let realmService = RealmManager()
-
+    private let firebaseManager = FirebaseManager()
+    
     init() {
         loadFlashcards()
     }
 
     func loadFlashcards() {
+        if Auth.auth().currentUser != nil {
+            fetchFromFirebase()
+        } else {
+            fetchFromLocal()
+        }
+    }
+
+    private func fetchFromFirebase() {
+        firebaseManager.fetchFlashcards { result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let fetchedFlashcards):
+                    self.flashcards = fetchedFlashcards
+                case .failure(let error):
+                    print("Error fetching flashcards from Firebase: \(error)")
+                    self.fetchFromLocal()
+                }
+            }
+        }
+    }
+    
+    private func fetchFromLocal() {
         let realmFlashcards = realmService.getFlashcards()
         flashcards = realmFlashcards.map { Flashcard(value: $0) }
     }
 
-    func addFlashcard(name: String, imagePath: String, userId: String?) {
+    func addFlashcard(name: String, imageData: Data) {
         let newCard = Flashcard()
         newCard.id = ObjectId.generate()
         newCard.name = name
-        newCard.imagePath = imagePath
         newCard.createdAt = Date()
-        
-        realmService.addFlashcard(newCard)
-        loadFlashcards()
+
+        if let user = Auth.auth().currentUser {
+            firebaseManager.addFlashcard(newCard, imageData: imageData) { result in
+                DispatchQueue.main.async {
+                    switch result {
+                    case .success:
+                        self.loadFlashcards()
+                    case .failure(let error):
+                        print("Error adding flashcard to Firebase: \(error)")
+                    }
+                }
+            }
+        } else {
+            saveLocally(flashcard: newCard, imageData: imageData)
+        }
     }
-    
+
+    private func saveLocally(flashcard: Flashcard, imageData: Data) {
+        if let fileName = saveImageToFileSystem(imageData: imageData) {
+            flashcard.imagePath = fileName
+            realmService.addFlashcard(flashcard)
+            loadFlashcards()
+        }
+    }
+
     func saveImageToFileSystem(imageData: Data) -> String? {
         let fileManager = FileManager.default
         guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
@@ -44,10 +86,9 @@ class FlashcardViewModel: ObservableObject {
 
         do {
             try imageData.write(to: fileURL)
-            print("Image saved at path: \(fileURL.path)")
             return fileName
         } catch {
-            print("Error saving image to file system: \(error)")
+            print("Error saving image: \(error)")
             return nil
         }
     }
