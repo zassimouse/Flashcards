@@ -12,7 +12,7 @@ struct AddCardView: View {
     
     var body: some View {
         NavigationStack {
-            VStack(spacing: 20) {
+            VStack(spacing: 10) {
                 TextField("Enter Caption", text: $cardName)
                     .padding(.horizontal, 10)
                     .frame(height: 50)
@@ -38,6 +38,8 @@ struct AddCardView: View {
                             } else {
                                 Image(("photo.badge.plus"))
                                     .resizable()
+                                    .renderingMode(.template)
+                                    .foregroundColor(Color(UIColor.secondaryLabel))
                                     .scaledToFit()
                                     .frame(width: size * 0.25, height: size * 0.25)
                             }
@@ -59,7 +61,7 @@ struct AddCardView: View {
                 
                 Button {
                     if let imageData = selectedImageData {
-                        viewModel.addFlashcard(name: cardName, imageData: imageData)
+                        viewModel.saveFlashcardBasedOnAuth(name: cardName, imageData: imageData)
                     }
                     dismiss()
                 } label: {
@@ -68,10 +70,8 @@ struct AddCardView: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(.blue)
                         .background(cardName.isEmpty || selectedImageData == nil ? Color.gray : Color.blue)
                         .cornerRadius(15)
-                        .disabled(cardName.isEmpty || selectedImageData == nil)
                 }
                 .disabled(cardName.isEmpty || selectedImageData == nil )
                 

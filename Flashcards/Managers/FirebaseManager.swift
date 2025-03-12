@@ -88,6 +88,7 @@ class FirebaseManager {
                     
                     let flashcard = Flashcard()
                     flashcard.id = ObjectId.generate()
+                    flashcard.firestoreDocumentID = doc.documentID
                     flashcard.name = name
                     flashcard.imagePath = imageUrl
                     flashcard.createdAt = timestamp.dateValue()
@@ -98,4 +99,43 @@ class FirebaseManager {
                 completion(.success(flashcards))
             }
     }
+    
+    func deleteFlashcardFromFirebase(_ card: Flashcard, completion: @escaping (Result<Void, Error>) -> Void) {
+        guard let userId = Auth.auth().currentUser?.uid else {
+            completion(.failure(NSError(domain: "NoUser", code: 401, userInfo: [NSLocalizedDescriptionKey: "User not authenticated"])))
+            return
+        }
+
+        let db = Firestore.firestore()
+        
+        guard let documentID = card.firestoreDocumentID, !card.imagePath.isEmpty else {
+            completion(.failure(NSError(domain: "InvalidCard", code: 400, userInfo: [NSLocalizedDescriptionKey: "Card does not have a valid document ID or image path"])))
+            return
+        }
+        
+        let storageRef = storage.reference(forURL: card.imagePath)
+        
+        storageRef.delete { error in
+            if let error = error {
+                print("Error deleting image from Storage:", error)
+                completion(.failure(error))
+                return
+            }
+
+            print("Image successfully deleted from Storage")
+            
+            let cardRef = db.collection("users").document(userId).collection("flashcards").document(documentID)
+            
+            cardRef.delete { error in
+                if let error = error {
+                    print("Error deleting flashcard from Firestore:", error)
+                    completion(.failure(error))
+                } else {
+                    print("Flashcard successfully deleted from Firestore")
+                    completion(.success(()))
+                }
+            }
+        }
+    }
+
 }

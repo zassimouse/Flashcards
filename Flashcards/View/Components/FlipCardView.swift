@@ -9,10 +9,12 @@ import SwiftUI
 
 struct FlipCardView: View {
     let flashcard: Flashcard
+    let image: UIImage?
     @State private var isFlipped = false
 
-    init(_ flashcard: Flashcard) {
+    init(flashcard: Flashcard, image: UIImage? = nil) {
         self.flashcard = flashcard
+        self.image = image
     }
 
     var body: some View {
@@ -21,7 +23,7 @@ struct FlipCardView: View {
                 BackCardView(text: flashcard.name)
                     .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
             } else {
-                FrontCardView(flashcard: flashcard)
+                FrontCardView(flashcard: flashcard, image: image)
             }
         }
         .aspectRatio(1, contentMode: .fit)
@@ -32,55 +34,34 @@ struct FlipCardView: View {
             isFlipped.toggle()
         }
     }
-
-    private static func loadImage(from path: String) -> UIImage? {
-        let fileURL = URL(fileURLWithPath: path)
-        return UIImage(contentsOfFile: fileURL.path)
-    }
 }
 
 struct FrontCardView: View {
     let flashcard: Flashcard
+    let image: UIImage?
 
     var body: some View {
         GeometryReader { geometry in
             VStack {
-                if let image = loadImage(from: flashcard.imagePath) {
+                if let image = image {
                     Image(uiImage: image)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
                         .clipped()
                 } else {
-                    Image("photo.badge.plus")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: geometry.size.width * 0.25, height: geometry.size.height * 0.25)
-                        .foregroundColor(Color(UIColor.secondaryLabel))
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.gray.opacity(0.3))
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .shimmer(true)
                 }
             }
+            .frame(width: geometry.size.width, height: geometry.size.height)
             .background(Color.gray.opacity(0.3))
             .clipShape(RoundedRectangle(cornerRadius: 20))
         }
     }
-
-    func loadImage(from relativePath: String) -> UIImage? {
-        let fileManager = FileManager.default
-        guard let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first else {
-            return nil
-        }
-        
-        let fileURL = documentsDirectory.appendingPathComponent(relativePath)
-        
-        if fileManager.fileExists(atPath: fileURL.path) {
-            print("Image found at path: \(fileURL.path)")
-            return UIImage(contentsOfFile: fileURL.path)
-        } else {
-            print("Image not found at path: \(fileURL.path)") 
-            return nil
-        }
-    }
 }
+
 
 struct BackCardView: View {
     let text: String
@@ -88,7 +69,7 @@ struct BackCardView: View {
     var body: some View {
         VStack {
             Text(text)
-                .font(.title)
+                .font(.headline)
                 .bold()
                 .foregroundColor(.white)
                 .multilineTextAlignment(.center)
@@ -100,6 +81,4 @@ struct BackCardView: View {
     }
 }
 
-#Preview {
-    FlipCardView(Flashcard(value: ["name": "Sample Text", "imagePath": ""]))
-}
+

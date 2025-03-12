@@ -20,21 +20,24 @@ struct ContentView: View {
             ScrollView {
                 LazyVGrid(columns: columns, spacing: 10) {
                     ForEach(viewModel.flashcards, id: \.id) { flashcard in
-                        FlipCardView(flashcard)
-                            .contextMenu {
-                                Button {
-                                } label: {
-                                    Label("Edit", systemImage: "pencil")
+                        if let image = viewModel.images[flashcard.id.stringValue] {
+                            FlipCardView(flashcard: flashcard, image: image)
+                                .contextMenu {
+                                    Button(role: .destructive) {
+                                        viewModel.deleteFlashcard(flashcard)
+                                    } label: {
+                                        Label("Delete", systemImage: "trash")
+                                    }
                                 }
-                                
-                                Button(role: .destructive) {
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
-                                }
-                            }
+                        } else {
+                            FlipCardView(flashcard: flashcard)
+                        }
                     }
                 }
                 .padding(.horizontal)
+            }
+            .refreshable {
+                viewModel.fetchFlashcardsBasedOnAuth()
             }
             .navigationTitle("Flashcards")
             .toolbar {
@@ -56,6 +59,8 @@ struct ContentView: View {
     }
 }
 
+
 #Preview {
     ContentView()
 }
+

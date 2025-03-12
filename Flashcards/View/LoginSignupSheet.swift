@@ -15,7 +15,7 @@ struct LoginSignupSheet: View {
 
     var body: some View {
         NavigationView {
-            VStack {
+            VStack(spacing: 10) {
                 TextField("Email", text: $authViewModel.email)
                     .keyboardType(.emailAddress)
                     .textInputAutocapitalization(.never)
@@ -66,10 +66,10 @@ struct LoginSignupSheet: View {
                         .foregroundColor(.white)
                         .padding()
                         .frame(maxWidth: .infinity)
-                        .background(authViewModel.email.isEmpty || authViewModel.password.isEmpty ? Color.gray : Color.blue)
+                        .background(authViewModel.email.isEmpty || authViewModel.password.count < 6 ? Color.gray : Color.blue)
                         .cornerRadius(15)
                 }
-                .disabled(authViewModel.email.isEmpty || authViewModel.password.isEmpty)
+                .disabled(authViewModel.email.isEmpty || authViewModel.password.count < 6)
 
                 Spacer()
             }
@@ -77,6 +77,8 @@ struct LoginSignupSheet: View {
             .navigationTitle(isSignup ? "Sign Up" : "Log In")
             .navigationBarItems(trailing: Button("Cancel") {
                 dismiss()
+                authViewModel.email = ""
+                authViewModel.password = ""
             })
         }
     }

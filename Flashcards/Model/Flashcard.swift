@@ -13,4 +13,5 @@ class Flashcard: Object, Identifiable {
     @Persisted var name: String
     @Persisted var imagePath: String
     @Persisted var createdAt: Date
+    @Persisted var firestoreDocumentID: String?
 }

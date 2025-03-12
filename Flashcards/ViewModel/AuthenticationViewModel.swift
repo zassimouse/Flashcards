@@ -20,7 +20,7 @@ class AuthenticationViewModel: ObservableObject {
     }
     @Published var currentUserEmail = ""
 
-    private var authManager = FirebaseAuthManager()
+    private var authManager = AuthenticationManager()
     
     init() {
         self.isAuthenticated = authManager.user != nil

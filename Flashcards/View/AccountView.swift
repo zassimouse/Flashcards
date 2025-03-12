@@ -13,7 +13,7 @@ struct AccountView: View {
     @State private var showSignupSheet = false
     
     var body: some View {
-        VStack {
+        VStack(spacing: 10) {
             if authViewModel.isAuthenticated {
                 Text("\(authViewModel.currentUserEmail)")
                     .font(.headline)

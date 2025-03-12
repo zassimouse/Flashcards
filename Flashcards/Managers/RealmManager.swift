@@ -30,16 +30,23 @@ class RealmManager {
 
     
     func openRealm() {
-        do {
-            let config = Realm.Configuration(schemaVersion: 1, migrationBlock: { migration, oldSchemaVersion in
-                if oldSchemaVersion < 1 {
+        let config = Realm.Configuration(
+            schemaVersion: 2,
+            migrationBlock: { migration, oldSchemaVersion in
+                if oldSchemaVersion < 2 {
+                    migration.enumerateObjects(ofType: Flashcard.className()) { _, newObject in
+                        newObject?["firestoreDocumentID"] = nil
+                    }
                 }
-            })
+            }
+        )
 
-            Realm.Configuration.defaultConfiguration = config
+        Realm.Configuration.defaultConfiguration = config
+
+        do {
             localRealm = try Realm()
         } catch {
-            print("Error opening realm Realm:", error)
+            print("Error initializing Realm: \(error.localizedDescription)")
         }
     }
     

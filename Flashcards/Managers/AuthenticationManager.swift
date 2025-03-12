@@ -8,8 +8,10 @@
 import Foundation
 import FirebaseAuth
 
-class FirebaseAuthManager: ObservableObject {
-    @Published var user: User?
+class AuthenticationManager: ObservableObject {
+    static let shared = AuthenticationManager()
+    
+    var user: User?
     
     init() {
         self.user = Auth.auth().currentUser
